@@ -1,0 +1,36 @@
+{
+  "name": "auth-back",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "run:debug": "set DEBUG=* & nodemon ./bin/www",
+    "test": "nyc --reporter=html --reporter=text mocha --exit tests/**/*.spec.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-jwt": "^6.0.0",
+    "express-validator": "^6.10.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.2",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "~1.9.1",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-require-sort": "^1.2.2",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0",
+    "sinon": "^10.0.0"
+  }
+}
