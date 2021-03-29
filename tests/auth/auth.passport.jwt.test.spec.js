@@ -32,7 +32,7 @@ describe('passport jwt strategy', () => {
   });
   after(async () => {
     // console.log('after hook');
-    User.remove().exec();
+    await User.remove().exec();
 
     server.close();
   });

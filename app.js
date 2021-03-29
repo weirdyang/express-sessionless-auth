@@ -9,7 +9,7 @@ const logger = require('morgan');
 const { errorHandler, notFoundHandler } = require('./middleware');
 const { auth, router: authRouter } = require('./routes/auth.routes');
 const journalRouter = require('./routes/journals.route');
-const usersRouter = require('./routes/users.route');s
+const usersRouter = require('./routes/users.route');
 
 const app = express();
 require('./config/passport.js')(app);

@@ -4,7 +4,6 @@ const { expect } = require('chai');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const express = require('express');
-const sinon = require('sinon');
 
 const { PORT } = require('../../config');
 const middleware = require('../../middleware');
