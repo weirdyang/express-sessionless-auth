@@ -3,8 +3,6 @@
 const { assert } = require('chai');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const passport = require('passport');
-const sinon = require('sinon');
 
 // const productId = config.productId;
 const app = require('../../app');
