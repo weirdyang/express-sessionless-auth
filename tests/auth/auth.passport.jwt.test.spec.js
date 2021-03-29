@@ -24,14 +24,14 @@ const user = new User({
 describe('passport jwt strategy', () => {
   let server;
   before(async () => {
-    console.log(user._id);
+    // console.log(user._id);
     server = app.listen(PORT,
       () => console.log(`Your server is running on port ${PORT}`));
     await user.save();
     user.token = user.generateJWT();
   });
   after(async () => {
-    console.log('after hook');
+    // console.log('after hook');
     User.remove().exec();
 
     server.close();
@@ -84,7 +84,7 @@ describe('passport jwt strategy', () => {
       const fakeRes = {};
       passport.authenticate('jwt',
         (error, payload, info) => {
-          console.log(info);
+          // console.log(info);
           try {
             assert.isFalse(payload);
             assert.isNull(error);
@@ -97,13 +97,13 @@ describe('passport jwt strategy', () => {
     });
     it('should return a false with an info message when a expired token is passed in', (done) => {
       const exp = new Date('2002-12-12');
-      console.log(exp, 'exp');
+      // console.log(exp, 'exp');
       const expiredToken = jwt.sign({
         id: user._id,
         username: user.username,
         exp: parseInt(exp.getTime() / 1000, 10),
       }, secret);
-      console.log(expiredToken, 'expired token');
+      // console.log(expiredToken, 'expired token');
       const wrongUser = {
         body: {
           username: 'user.username',

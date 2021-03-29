@@ -6,11 +6,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const logger = require('morgan');
 
-const HttpError = require('./models/http-error');
+const { errorHandler, notFoundHandler } = require('./middleware');
 const { auth, router: authRouter } = require('./routes/auth.routes');
 const journalRouter = require('./routes/journals.route');
-const usersRouter = require('./routes/users.route');
-const originService = require('./services/origins.service');
+const usersRouter = require('./routes/users.route');s
 
 const app = express();
 require('./config/passport.js')(app);
@@ -49,25 +48,8 @@ app.use('/auth', authRouter);
 app.use('/journals', journalRouter);
 
 // error for unsupported routes (which we dont want to handle)
-app.use((req, res, next) => {
-  const error = new HttpError('Could not find this route', 404);
-  throw error;
-});
+app.use(notFoundHandler);
 
-app.use((error, req, res, next) => {
-  if (res.headerSent) {
-    return next(error);
-  }
-  if (error instanceof HttpError) {
-    const errorMessage = {
-      message: error.message,
-    };
-    if (error.additionalInfo) {
-      errorMessage.additionalInfo = error.additionalInfo;
-    }
-    return res.status(error.code).json(errorMessage);
-  }
-  res.status(500);
-  return res.json({ message: error.message || 'An unknown error occured!' });
-});
+app.use(errorHandler);
+
 module.exports = app;

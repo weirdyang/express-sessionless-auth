@@ -16,7 +16,7 @@ const User = require('../../models/user');
 chai.use(chaiHttp);
 chai.should();
 const { expect } = chai;
-chai.use(chaiHttp);
+
 const journal = new Journal({
   title: 'test',
   entry: 'hello',
@@ -32,7 +32,7 @@ let deleteId;
 describe('journals', () => {
   let server;
   before(async () => {
-    console.log(user._id);
+    // console.log(user._id);
     sinon.stub(passport, 'authenticate').returns((req, res, next) => {
       req.user = user;
       req.user.id = user._id;
@@ -45,7 +45,7 @@ describe('journals', () => {
     await journal.save();
   });
   after(async () => {
-    console.log('after hook');
+    // console.log('after hook');
     passport.authenticate.restore();
     mongoose.connection.dropDatabase();
     server.close();
@@ -79,7 +79,7 @@ describe('journals', () => {
 
   describe('GET /:id', () => {
     it('should return 200', (done) => {
-      console.log(user._id);
+      // console.log(user._id);
       chai.request(server)
         .get(`/journals/${journal._id}`)
         .end(async (err, res) => {
@@ -112,7 +112,7 @@ describe('journals', () => {
         });
     });
     it('should return 500', (done) => {
-      console.log(user._id);
+      // console.log(user._id);
       chai.request(server)
         .get('/journals/wrongFormatId')
         .end((err, res) => {
@@ -136,7 +136,7 @@ describe('journals', () => {
           user: user._id,
         })
         .end((err, res) => {
-          console.log(res.body);
+          // console.log(res.body);
           expect(res)
             .to
             .have
@@ -152,7 +152,7 @@ describe('journals', () => {
           title: 'invalid data',
         })
         .end((err, res) => {
-          console.log(res.body);
+          // console.log(res.body);
           expect(res)
             .to
             .have

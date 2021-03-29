@@ -23,14 +23,14 @@ const user = new User({
 describe('users', () => {
   let server;
   before(async () => {
-    console.log(user._id);
+    // console.log(user._id);
     sinon.stub(passport, 'authenticate').returns((req, res, next) => next());
     server = app.listen(PORT,
       () => console.log(`Your server is running on port ${PORT}`));
     await user.save();
   });
   after(async () => {
-    console.log('after hook');
+    // console.log('after hook');
     passport.authenticate.restore();
     User.remove().exec();
     Journal.remove().exec();
@@ -65,7 +65,7 @@ describe('users', () => {
 
   describe('GET /:id', () => {
     it('should return 200 when logged in', (done) => {
-      console.log(user._id);
+      // console.log(user._id);
       chai.request(server)
         .get(`/users/${user._id}`)
         .end((err, res) => {
@@ -77,7 +77,7 @@ describe('users', () => {
         });
     });
     it('should return 404 when passed in non-existent journal id', (done) => {
-      console.log(user._id);
+    //  console.log(user._id);
       chai.request(server)
         .get('/users/605cb85363b3401cac3c3b2b')
         .end((err, res) => {
@@ -89,7 +89,7 @@ describe('users', () => {
         });
     });
     it('should return 500 when passed in an id in the wrong format', (done) => {
-      console.log(user._id);
+      // console.log(user._id);
       chai.request(server)
         .get('/users/wrongFormatId')
         .end((err, res) => {
