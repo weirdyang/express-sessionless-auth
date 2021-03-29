@@ -13,25 +13,7 @@ const usersRouter = require('./routes/users.route');
 
 const app = express();
 require('./config/passport.js')(app);
-// mongoose setup
-// mongoose.connect(`${config.mongoUrl}/${config.databaseName}`, mongooseOptions);
-// catch to catch initial connection error
-// 2.tcp.ngrok.io:13741
-const connectionString = process.env.MONGO_DB || 'mongodb://localhost/authBackEnd';
-
-debug(connectionString, 'connection string');
-// catch to catch initial connection error
-mongoose.connect(connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-}).catch((err) => {
-  debug(err, 'cannot connect');
-});
-mongoose.connection.on('error', (error) => {
-  debug(error);
-});
+require('./config/mongoose')();
 
 // originService
 //   .insertOrigin('vue-front', 'http://localhost:8080')
