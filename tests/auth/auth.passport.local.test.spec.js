@@ -22,14 +22,12 @@ const user = new User({
 describe('passport local strategy', () => {
   let server;
   before(async () => {
-    console.log(user._id);
     server = app.listen(PORT,
       () => console.log(`Your server is running on port ${PORT}`));
     await user.save();
   });
   after(async () => {
     console.log('after hook');
-    User.remove().exec();
 
     server.close();
   });
