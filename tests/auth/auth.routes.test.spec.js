@@ -7,8 +7,7 @@ const chaiHttp = require('chai-http');
 // const productId = config.productId;
 const app = require('../../app');
 const { PORT } = require('../../config');
-const Journal = require('../../models/journal');
-const User = require('../../models/user');
+
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
@@ -16,7 +15,7 @@ const { expect } = chai;
 const user = {
   username: 'authtest',
   password: 'authtest',
-  email: 'abcde@email.com',
+  email: 'zxczxczxca@email.com',
 };
 
 describe('users', () => {
@@ -29,8 +28,7 @@ describe('users', () => {
   });
   after(async () => {
     // console.log('after hook');
-    await User.remove().exec();
-    await Journal.remove().exec();
+
     server.close();
   });
 

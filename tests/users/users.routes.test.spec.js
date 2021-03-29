@@ -17,7 +17,7 @@ const { expect } = chai;
 const user = new User({
   username: '2qsdax',
   password: 'asdzxczxc',
-  email: 'abcde@email.com',
+  email: 'asdasdasd@email.com',
 });
 
 describe('users', () => {
@@ -32,8 +32,6 @@ describe('users', () => {
   after(async () => {
     // console.log('after hook');
     passport.authenticate.restore();
-    await User.remove().exec();
-    await Journal.remove().exec();
     server.close();
   });
 

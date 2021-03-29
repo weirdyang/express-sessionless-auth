@@ -23,7 +23,7 @@ const journal = new Journal({
   dateOfEntry: '2002-12-09',
 });
 const user = new User({
-  email: 'abcdef@abcdef.com',
+  email: 'axasxzxs@abcdef.com',
   password: '123456',
   username: 'abcdef',
 });
@@ -47,7 +47,7 @@ describe('journals', () => {
   after(async () => {
     // console.log('after hook');
     passport.authenticate.restore();
-    mongoose.connection.dropDatabase();
+
     server.close();
   });
 

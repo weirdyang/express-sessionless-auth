@@ -18,7 +18,7 @@ chai.should();
 const user = new User({
   username: 'abcdefg',
   password: 'abcdefg',
-  email: 'abcde@email.com',
+  email: 'axzc2swdf@email.com',
 });
 
 describe('passport jwt strategy', () => {
@@ -32,7 +32,6 @@ describe('passport jwt strategy', () => {
   });
   after(async () => {
     // console.log('after hook');
-    await User.remove().exec();
 
     server.close();
   });
