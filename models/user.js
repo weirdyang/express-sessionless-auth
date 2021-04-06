@@ -36,12 +36,12 @@ const userSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-userSchema.plugin(uniqueValidator, { message: '{PATH} exists, try logging in' });
+userSchema.plugin(uniqueValidator, { message: '{PATH} is in use' });
 
 userSchema.methods.generateJWT = function generateToken() {
-  const today = new Date();
-  const exp = new Date(today);
-  exp.setDate(today.getDate() + 60);
+  const exp = new Date();
+  exp.setDate(exp.getDate() + 60);
+  debug(exp);
   return jwt.sign({
     id: this._id,
     username: this.username,
@@ -51,7 +51,7 @@ userSchema.methods.generateJWT = function generateToken() {
 
 userSchema.methods.toJSON = function toJson() {
   return {
-    _id: this._id,
+    id: this._id,
     email: this.email,
     username: this.username,
   };

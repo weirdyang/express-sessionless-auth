@@ -17,6 +17,13 @@ const getUsers = wrap(async (req, res, next) => {
   return res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 });
 
+const getUserInfo = wrap(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res.sendStatus(401);
+  }
+  return res.json({ user: user.toJSON() });
+});
 const getUser = wrap(async (req, res, next) => {
   // userId is passed in the req.pararms
   // e.g /users/<userId>
@@ -42,4 +49,5 @@ const getUser = wrap(async (req, res, next) => {
 module.exports = {
   getUsers,
   getUser,
+  getUserInfo,
 };

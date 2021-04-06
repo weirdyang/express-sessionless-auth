@@ -8,9 +8,16 @@ const User = require('../models/user');
 
 const secureFlag = !!process.env.NODE_ENV;
 
+const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) => {
+  const message = errors;
+  message[key] = error.errors[key].message;
+
+  return message;
+}, {});
 const register = async (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
+    debug(errors.array());
     return next(
       new HttpError('Invalid inputs passed, please check your data', 422),
     );
@@ -21,8 +28,13 @@ const register = async (req, res, next) => {
     await newUser.save();
     return res.status(200).send({ message: `${newUser.username} please login` });
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({
+        errors: formatErrors(error),
+      });
+    }
     return next(
-      new HttpError(error.message, 422),
+      new HttpError(error.message, 500),
     );
   }
 };
@@ -37,7 +49,7 @@ const login = (req, res, next) => {
   debug(req.user);
   debug(req.session);
   debug(req.cookies);
-  return passport.authenticate('local',
+  return passport.authenticate('local', { session: false },
     (err, user, info) => {
       if (err) {
         debug(err);
@@ -50,21 +62,14 @@ const login = (req, res, next) => {
       // if pass session: false, user will not be serialized
       // to use req.login() need to call passport.initialize()
       // https://stackoverflow.com/questions/25171231/passportjs-custom-callback-and-set-session-to-false
-      return req.logIn(user, { session: false }, (error) => {
-        if (error) {
-          return next(
-            new HttpError('Error logging in, please try again', 422),
-          );
-        }
 
-        res.cookie('jwt',
-          token,
-          {
-            httpOnly: true,
-            secure: secureFlag, // set to false if using http
-          });
-        return res.status(200).send({ user: user.toJSON(), token });
-      });
+      res.cookie('jwt',
+        token,
+        {
+          httpOnly: true,
+          secure: secureFlag, // set to false if using http
+        });
+      return res.status(200).send({ user: user.toJSON() });
     })(req, res, next);
 };
 

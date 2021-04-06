@@ -11,9 +11,10 @@ router.post('/register',
     check('email').normalizeEmail().isEmail().bail(),
     check('password').not().isEmpty().bail(),
   ], register);
+
 router.post('/login',
   [
-    check('username').not().isEmpty().bail(),
+    check('email').not().isEmpty().bail(),
     check('password').not().isEmpty().bail(),
   ], login);
 module.exports = {

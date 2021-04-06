@@ -8,11 +8,11 @@ module.exports = function localStrategy() {
   passport.use(
     new LocalStrategy(
       {
-        usernameField: 'username',
+        usernameField: 'email',
         passwordField: 'password',
       },
-      async (username, password, done) => {
-        User.findOne({ username }, '_id username email password')
+      async (email, password, done) => {
+        User.findOne({ email }, '_id username email password')
           .then(async (user) => {
             debug(user);
             if (!user) {

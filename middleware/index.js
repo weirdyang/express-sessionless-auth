@@ -23,9 +23,25 @@ function middleware() {
     return next(error);
   };
 
+  const uniqueValidationErrorHandler = (err, req, res, next) => {
+    if (err.name === 'ValidationError') {
+      return res.status(422).json({
+        errors: Object.keys(err.errors).reduce((errors, key) => {
+          const message = errors;
+          message[key] = err.errors[key].message;
+
+          return message;
+        }, {}),
+      });
+    }
+
+    return next(err);
+  };
+
   return {
     notFoundHandler,
     errorHandler,
+    uniqueValidationErrorHandler,
   };
 }
 

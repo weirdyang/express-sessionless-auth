@@ -14,6 +14,7 @@ module.exports = function jwtstrategy() {
         secretOrKey: secret,
       },
       (jwtPayload, done) => {
+        debug(jwtPayload);
         if (!jwtPayload.id || !jwtPayload.username) {
           debug('no jwtpayload');
           return done(null, false, { message: 'invalid payload' });

@@ -35,7 +35,7 @@ describe('passport local strategy', () => {
     it('should return a req with a user with same id', (done) => {
       const fakeReq = {
         body: {
-          username: user.username,
+          email: user.email,
           password: originalPassword,
         },
         logIn() { },

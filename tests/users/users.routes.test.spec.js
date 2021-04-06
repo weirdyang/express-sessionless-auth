@@ -61,11 +61,11 @@ describe('users', () => {
     });
   });
 
-  describe('GET /:id', () => {
+  describe('GET /single/:id', () => {
     it('should return 200 when logged in', (done) => {
       // console.log(user._id);
       chai.request(server)
-        .get(`/users/${user._id}`)
+        .get(`/users/single/${user._id}`)
         .end((err, res) => {
           expect(res)
             .to
@@ -74,10 +74,10 @@ describe('users', () => {
           done();
         });
     });
-    it('should return 404 when passed in non-existent journal id', (done) => {
+    it('should return 404 when passed in non-existent user id', (done) => {
     //  console.log(user._id);
       chai.request(server)
-        .get('/users/605cb85363b3401cac3c3b2b')
+        .get('/users/single/605cb85363b3401cac3c3b2b')
         .end((err, res) => {
           expect(res)
             .to
@@ -89,7 +89,7 @@ describe('users', () => {
     it('should return 500 when passed in an id in the wrong format', (done) => {
       // console.log(user._id);
       chai.request(server)
-        .get('/users/wrongFormatId')
+        .get('/users/single/wrongFormatId')
         .end((err, res) => {
           expect(res)
             .to

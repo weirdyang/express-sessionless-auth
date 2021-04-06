@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
 const debug = require('debug')('app:config:mongoose');
+const mongoose = require('mongoose');
 
 const connectionString = process.env.MONGO_DB || 'mongodb://localhost/authBackEnd';
 

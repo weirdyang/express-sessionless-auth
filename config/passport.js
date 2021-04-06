@@ -6,7 +6,6 @@ require('./passport.jwt.strategy')();
 
 module.exports = function passportConfig(app) {
   app.use(passport.initialize());
-  app.use(passport.session());
 
   // stores user in session
   passport.serializeUser((user, done) => {
