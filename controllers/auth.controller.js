@@ -38,7 +38,10 @@ const register = async (req, res, next) => {
     );
   }
 };
-
+const logOut = (req, res, next) => {
+  res.clearCookie('jwt');
+  return res.json('logged out');
+};
 const login = (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
@@ -76,4 +79,5 @@ const login = (req, res, next) => {
 module.exports = {
   register,
   login,
+  logOut,
 };
