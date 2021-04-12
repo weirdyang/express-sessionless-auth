@@ -1,11 +1,14 @@
 const path = require('path');
 
+require('dotenv').config();
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const debug = require('debug')('app');
 const express = require('express');
 const logger = require('morgan');
 
 const { errorHandler, notFoundHandler } = require('./middleware');
-const { auth, router: authRouter } = require('./routes/auth.routes');
+const { router: authRouter } = require('./routes/auth.routes');
 const journalRouter = require('./routes/journals.route');
 const usersRouter = require('./routes/users.route');
 
@@ -16,7 +19,13 @@ require('./config/mongoose')();
 // originService
 //   .insertOrigin('vue-front', 'http://localhost:8080')
 //   .then((result) => debug(result));
-
+const corsOptions = {
+  origin: process.env.CLIENT_URL,
+  credentials: true,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+debug(process.env.CLIENT_URL);
+app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
