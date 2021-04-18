@@ -3,10 +3,12 @@ const path = require('path');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const csrf = require('csurf');
 const debug = require('debug')('app');
 const express = require('express');
 const logger = require('morgan');
 
+const csrfProtection = csrf({ cookie: true });
 const { errorHandler, notFoundHandler } = require('./middleware');
 const { router: authRouter } = require('./routes/auth.routes');
 const journalRouter = require('./routes/journals.route');
@@ -32,6 +34,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(csrfProtection);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/journals', journalRouter);

@@ -2,7 +2,9 @@ const express = require('express');
 const { check } = require('express-validator');
 const passport = require('passport');
 
-const { register, login, logOut } = require('../controllers/auth.controller');
+const {
+  register, login, logOut, getCrsfToken,
+} = require('../controllers/auth.controller');
 
 const router = express.Router();
 router.post('/register',
@@ -19,6 +21,9 @@ router.post('/login',
   ], login);
 
 router.get('/logout', logOut);
+
+router.get('/crsftoken', getCrsfToken);
+
 module.exports = {
   auth: {
     jwt: (req, res, next) => passport.authenticate('jwt', { session: false })(req, res, next),
