@@ -6,7 +6,7 @@ const { errorFormatter } = require('../formatters');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
-const secureFlag = !!process.env.NODE_ENV;
+const secureFlag = process.env.NODE_ENV !== 'production';
 
 const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) => {
   const message = errors;
@@ -38,10 +38,11 @@ const register = async (req, res, next) => {
     );
   }
 };
-const logOut = (req, res, next) => {
+const logOut = (req, res) => {
   res.clearCookie('jwt');
   return res.json('logged out');
 };
+
 const login = (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
@@ -76,8 +77,10 @@ const login = (req, res, next) => {
     })(req, res, next);
 };
 
+const getCrsfToken = (req, res) => res.json({ token: req.csrfToken() });
 module.exports = {
   register,
   login,
   logOut,
+  getCrsfToken,
 };
