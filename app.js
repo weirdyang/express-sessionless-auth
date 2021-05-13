@@ -8,7 +8,16 @@ const debug = require('debug')('app');
 const express = require('express');
 const logger = require('morgan');
 
-const csrfProtection = csrf({ cookie: true });
+const csrfProtection = csrf(
+  {
+    cookie: {
+      httpOnly: true,
+      sameSite: 'none',
+      domain: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : {}, // process.env.CLIENT_URL = .example.com
+      secure: process.env.NODE_ENV === 'production',
+    },
+  },
+);
 const { errorHandler, notFoundHandler } = require('./middleware');
 const { router: authRouter } = require('./routes/auth.routes');
 const journalRouter = require('./routes/journals.route');
@@ -25,6 +34,7 @@ const corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  allowedHeaders: ['Origin', 'Content-type', 'Accept', 'Authorization', 'x-xsrf-token'],
 };
 debug(process.env.CLIENT_URL);
 app.use(cors(corsOptions));
