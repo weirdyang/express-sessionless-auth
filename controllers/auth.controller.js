@@ -6,7 +6,7 @@ const { errorFormatter } = require('../formatters');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
-const secureFlag = process.env.NODE_ENV !== 'production';
+const secureFlag = process.env.NODE_ENV === 'production';
 
 const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) => {
   const message = errors;
