@@ -13,7 +13,7 @@ const csrfProtection = csrf(
     cookie: {
       httpOnly: true,
       sameSite: 'none',
-      domain: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : {}, // process.env.CLIENT_URL = .example.com
+      domain: process.env.NODE_ENV === 'production' ? process.env.DOMAIN : {}, // process.env.CLIENT_URL = .example.com
       secure: process.env.NODE_ENV === 'production',
     },
   },
