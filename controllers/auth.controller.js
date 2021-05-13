@@ -72,6 +72,7 @@ const login = (req, res, next) => {
         {
           httpOnly: true,
           secure: secureFlag, // set to false if using http
+          sameSite: 'none',
         });
       return res.status(200).send({ user: user.toJSON() });
     })(req, res, next);
