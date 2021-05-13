@@ -21,6 +21,7 @@ const user = new User({
 });
 
 describe('users', () => {
+  console.log(process.env.NODE_ENV);
   let server;
   before(async () => {
     // console.log(user._id);

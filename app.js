@@ -3,18 +3,19 @@ const path = require('path');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const csrf = require('csurf');
+const csurf = require('csurf');
 const debug = require('debug')('app');
 const express = require('express');
 const logger = require('morgan');
 
-const csrfProtection = csrf(
+const csrfProtection = csurf(
   {
     cookie: {
       httpOnly: true,
       sameSite: 'none',
       secure: process.env.NODE_ENV === 'production',
     },
+    ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : [],
   },
 );
 const { errorHandler, notFoundHandler } = require('./middleware');
