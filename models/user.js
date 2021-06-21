@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     index: true,
     match: [/^[a-zA-Z0-9]+$/, 'no special characters'],
   },
+  avatar: {
+    type: String,
+    lowercase: true,
+    required: [true, 'please select an avatar'],
+  },
   email: {
     type: String,
     index: true,
@@ -43,6 +48,7 @@ userSchema.plugin(uniqueValidator, { message: '{PATH} is in use' });
 userSchema.methods.toProfileJSONFor = function toUserProfile(user) {
   return {
     username: this.username,
+    avatar: this.avatar,
     following: user ? user.isFollowing(this._id) : false,
   };
 };
@@ -74,6 +80,7 @@ userSchema.methods.generateJWT = function generateToken() {
 userSchema.methods.toJSON = function toJson() {
   return {
     id: this._id,
+    avatar: this.avatar,
     email: this.email,
     username: this.username,
   };
