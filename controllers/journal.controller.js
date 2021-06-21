@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const { errorFormatter } = require('../formatters');
 const HttpError = require('../models/http-error');
 const Journal = require('../models/journal');
-const User = require('../models/user');
 
 const createJournalEntry = async (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);

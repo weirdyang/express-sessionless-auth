@@ -32,12 +32,34 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   journals: {
-    type: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Journal' }],
+    type: [{ type: mongoose.Types.ObjectId, required: false, ref: 'Journal' }],
+  },
+  following: {
+    type: [{ type: mongoose.Types.ObjectId, required: false, ref: 'User' }],
   },
 }, { timestamps: true });
 
 userSchema.plugin(uniqueValidator, { message: '{PATH} is in use' });
+userSchema.methods.toProfileJSONFor = function toUserProfile(user) {
+  return {
+    username: this.username,
+    following: user ? user.isFollowing(this._id) : false,
+  };
+};
+userSchema.methods.unfollow = function unfollowUser(userId) {
+  this.following.pull(userId);
+  return this.save();
+};
+userSchema.methods.follow = function followUser(userId) {
+  if (this.favorites.indexOf(userId) === -1) {
+    this.favorites.push(userId);
+  }
 
+  return this.save();
+};
+userSchema.methods.isFollowing = function isFollowing(id) {
+  return this.following.some((followId) => followId.toString() === id.toString());
+};
 userSchema.methods.generateJWT = function generateToken() {
   const exp = new Date();
   exp.setDate(exp.getDate() + 60);
