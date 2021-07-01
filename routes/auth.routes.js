@@ -16,7 +16,7 @@ router.post('/register',
 
 router.post('/login',
   [
-    check('email').not().isEmpty().bail(),
+    check('username').not().isEmpty().bail(),
     check('password').not().isEmpty().bail(),
   ], login);
 
