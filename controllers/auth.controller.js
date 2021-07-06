@@ -15,6 +15,7 @@ const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) =
   return message;
 }, {});
 const register = async (req, res, next) => {
+  debug(req);
   const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
     debug(errors.array());
@@ -39,6 +40,7 @@ const register = async (req, res, next) => {
   }
 };
 const logOut = (req, res) => {
+  debug(req.cookies);
   res.clearCookie('jwt');
   return res.json('logged out');
 };
@@ -71,14 +73,17 @@ const login = (req, res, next) => {
         token,
         {
           httpOnly: true,
-          secure: secureFlag, // set to false if using http
+          secure: true, // set to false if using http
           sameSite: 'none',
         });
       return res.status(200).send({ user: user.toJSON() });
     })(req, res, next);
 };
 
-const getCrsfToken = (req, res) => res.json({ token: req.csrfToken() });
+const getCrsfToken = (req, res) => {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  res.json({ token: req.csrfToken() });
+};
 module.exports = {
   register,
   login,

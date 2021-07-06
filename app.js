@@ -13,9 +13,9 @@ const csrfProtection = csurf(
     cookie: {
       httpOnly: true,
       sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
     },
-    ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : [],
+    ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : ['GET', 'HEAD', 'OPTIONS'],
   },
 );
 const { errorHandler, notFoundHandler } = require('./middleware');
@@ -42,10 +42,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(csrfProtection);
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
+app.use('/users', csrfProtection, usersRouter);
+app.use('/auth', csrfProtection, authRouter);
 app.use('/journals', journalRouter);
 
 // error for unsupported routes (which we dont want to handle)
