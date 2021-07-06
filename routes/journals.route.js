@@ -16,7 +16,7 @@ const router = express.Router();
 const reqChecks = [
   check('title').not().isEmpty().bail(),
   check('entry').not().isEmpty().bail(),
-  check('dateOfEntry').isDate(),
+  check('dateOfEntry').isISO8601().toDate(),
 ];
 // all requests must be authenticated
 router.use(auth.jwt);
