@@ -19,8 +19,9 @@ const csrfProtection = csurf(
   },
 );
 const { errorHandler, notFoundHandler } = require('./middleware');
-const { router: authRouter } = require('./routes/auth.routes');
+const { router: authRouter } = require('./routes/auth.route');
 const journalRouter = require('./routes/journals.route');
+const productRouter = require('./routes/products.route');
 const usersRouter = require('./routes/users.route');
 
 const app = express();
@@ -44,8 +45,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', csrfProtection, usersRouter);
 app.use('/auth', csrfProtection, authRouter);
-app.use('/journals', journalRouter);
-
+app.use('/journals', csrfProtection, journalRouter);
+app.use('products', csrfProtection, productRouter);
 // error for unsupported routes (which we dont want to handle)
 app.use(notFoundHandler);
 
