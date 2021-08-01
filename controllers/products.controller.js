@@ -33,7 +33,7 @@ const createProduct = async (req, res, next) => {
   if (!result.isEmpty()) {
     debug(result);
     debug(result.errors);
-    return next(new HttpError('Invalid inputs', 422, result.errors));
+    return next(new HttpError('Invalid inputs', 422, result.array()));
   }
   let newProduct;
   try {
@@ -82,10 +82,10 @@ const fetchProductImage = async (req, res, next) => {
 };
 
 const updateProduct = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    debug(errors);
-    return next(new HttpError('Invalid inputs', 422));
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    debug(result);
+    return next(new HttpError('Invalid inputs', 422, result.array()));
   }
   try {
     const { name, description } = req.body;
