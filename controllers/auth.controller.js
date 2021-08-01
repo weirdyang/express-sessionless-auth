@@ -60,7 +60,7 @@ const login = (req, res, next) => {
         token,
         {
           httpOnly: true,
-          secure: secureFlag, // set to false if using http
+          secure: true, // set to true if sameSite none
           sameSite: 'none',
         });
       return res.status(200).send({ user: user.toJSON() });
