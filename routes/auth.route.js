@@ -9,9 +9,12 @@ const {
 const router = express.Router();
 router.post('/register',
   [
-    check('username').not().isEmpty().bail(),
-    check('email').normalizeEmail().isEmail().bail(),
-    check('password').not().isEmpty().bail(),
+    check('username').not().isEmpty().withMessage('Username can not be empty')
+      .bail(),
+    check('email').normalizeEmail().isEmail().withMessage('Invalid email')
+      .bail(),
+    check('password').not().isEmpty().withMessage('Invalid password')
+      .bail(),
   ], register);
 
 router.post('/login',

@@ -3,7 +3,7 @@ const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
-const { errorFormatter } = require('../formatters');
+const { errorFormatter, mongooseErrorFormatter } = require('../formatters');
 const HttpError = require('../models/http-error');
 const Product = require('../models/product');
 
@@ -28,13 +28,6 @@ const uploadStrategy = multer(
   },
 ).single('file');
 
-const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) => {
-  const message = errors;
-  message[key] = error.errors[key].message;
-
-  return message;
-}, {});
-
 const createProduct = async (req, res, next) => {
   const result = validationResult(req).formatWith(errorFormatter);
   if (!result.isEmpty()) {
@@ -57,9 +50,11 @@ const createProduct = async (req, res, next) => {
     return res.status(200).send({ message: `${newProduct.name} saved`, product: newProduct });
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return res.status(422).json({
-        message: Object.values(formatErrors(error)).join(', '),
-      });
+      debug(error.errors);
+      return next(
+        new HttpError(error.message, 422, mongooseErrorFormatter(error)),
+      );
+      // return next(new HttpError('Invalid inputs', 422, result.errors));
     }
     // return res.json(422).send('Error creating entry, please try again');
     return next(
@@ -121,7 +116,10 @@ const updateProduct = async (req, res, next) => {
     return res.json({ product, id: req.user.id });
   } catch (error) {
     return next(
-      new HttpError(error.message, 500),
+      new HttpError(error.message, 500,
+        error.name === 'ValidationError'
+          ? mongooseErrorFormatter(error)
+          : null),
     );
   }
 };
