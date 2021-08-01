@@ -49,6 +49,7 @@ const createProduct = async (req, res, next) => {
     await newProduct.save();
     return res.status(200).send({ message: `${newProduct.name} saved`, product: newProduct });
   } catch (error) {
+    debug(error);
     return handleError(error, next);
   }
 };
