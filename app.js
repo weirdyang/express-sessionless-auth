@@ -15,7 +15,7 @@ const csrfProtection = csurf(
     cookie: {
       httpOnly: true,
       sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
     },
     value: (req) => req.cookies['XSRF-TOKEN'],
     ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : ['GET', 'HEAD', 'OPTIONS'],
@@ -26,7 +26,6 @@ const { router: authRouter } = require('./routes/auth.route');
 const journalRouter = require('./routes/journals.route');
 const productRouter = require('./routes/products.route');
 const usersRouter = require('./routes/users.route');
-
 
 const app = express();
 require('./config/passport.js')(app);
