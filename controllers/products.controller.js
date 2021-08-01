@@ -3,7 +3,7 @@ const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
-const { errorFormatter, mongooseErrorFormatter, handleError } = require('../formatters');
+const { errorFormatter, handleError } = require('../formatters');
 const HttpError = require('../models/http-error');
 const Product = require('../models/product');
 
@@ -49,15 +49,7 @@ const createProduct = async (req, res, next) => {
     await newProduct.save();
     return res.status(200).send({ message: `${newProduct.name} saved`, product: newProduct });
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      debug(error.errors);
-      return next(
-        new HttpError(error.message, 422, mongooseErrorFormatter(error)),
-      );
-    }
-    return next(
-      new HttpError(error.message, 422),
-    );
+    return handleError(error, next);
   }
 };
 const fetchAllProducts = async (req, res, next) => {
