@@ -2,7 +2,7 @@ const debug = require('debug')('app:auth:controller');
 const { validationResult } = require('express-validator');
 const passport = require('passport');
 
-const { errorFormatter, mongooseErrorFormatter } = require('../formatters');
+const { errorFormatter, handleError } = require('../formatters');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
@@ -22,18 +22,10 @@ const register = async (req, res, next) => {
     await newUser.save();
     return res.status(200).send({ message: `${newUser.username} please login` });
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      return next(
-        new HttpError('Invalid inputs passed, please check your data',
-          422,
-          mongooseErrorFormatter(error)),
-      );
-    }
-    return next(
-      new HttpError(error.message, 500),
-    );
+    return handleError(error, next);
   }
 };
+
 const logOut = (req, res) => {
   debug(req.cookies);
   res.clearCookie('jwt');

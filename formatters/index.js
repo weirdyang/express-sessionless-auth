@@ -1,3 +1,5 @@
+const HttpError = require('../models/http-error');
+
 const errorFormatter = ({
   msg, param,
 }) => ({
@@ -13,7 +15,21 @@ const mongooseErrorFormatter = (error) => Object.keys(error.errors).reduce((erro
   message.push(newError);
   return message;
 }, []);
+
+const handleError = (error, next) => {
+  if (error.name === 'ValidationError') {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data',
+        422,
+        mongooseErrorFormatter(error)),
+    );
+  }
+  return next(
+    new HttpError(error.message, 500),
+  );
+};
 module.exports = {
   errorFormatter,
   mongooseErrorFormatter,
+  handleError,
 };
