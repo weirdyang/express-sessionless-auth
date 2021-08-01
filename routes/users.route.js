@@ -5,7 +5,7 @@ const {
 } = require('../controllers/users.controller');
 const User = require('../models/user');
 
-const { auth } = require('./auth.routes');
+const { auth } = require('./auth.route');
 
 const router = express.Router();
 router.use(auth.jwt);

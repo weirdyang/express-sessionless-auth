@@ -16,6 +16,7 @@ const user = {
   username: 'authtest',
   password: 'authtest',
   email: 'zxczxczxca@email.com',
+  avatar: 'leaf',
 };
 
 describe('users', () => {

@@ -10,7 +10,7 @@ const {
   deleteJournal,
 } = require('../controllers/journal.controller');
 
-const { auth } = require('./auth.routes');
+const { auth } = require('./auth.route');
 
 const router = express.Router();
 const reqChecks = [

@@ -2,25 +2,18 @@ const debug = require('debug')('app:auth:controller');
 const { validationResult } = require('express-validator');
 const passport = require('passport');
 
-const { errorFormatter } = require('../formatters');
+const { errorFormatter, handleError } = require('../formatters');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
 const secureFlag = process.env.NODE_ENV === 'production';
 
-const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) => {
-  const message = errors;
-  message[key] = error.errors[key].message;
-
-  return message;
-}, {});
 const register = async (req, res, next) => {
-  debug(req);
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    debug(errors.array());
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    debug(result.array());
     return next(
-      new HttpError('Invalid inputs passed, please check your data', 422),
+      new HttpError('Invalid inputs passed, please check your data', 422, result.array()),
     );
   }
   let newUser;
@@ -29,16 +22,10 @@ const register = async (req, res, next) => {
     await newUser.save();
     return res.status(200).send({ message: `${newUser.username} please login` });
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      return res.status(422).json({
-        errors: formatErrors(error),
-      });
-    }
-    return next(
-      new HttpError(error.message, 500),
-    );
+    return handleError(error, next);
   }
 };
+
 const logOut = (req, res) => {
   debug(req.cookies);
   res.clearCookie('jwt');
@@ -73,7 +60,7 @@ const login = (req, res, next) => {
         token,
         {
           httpOnly: true,
-          secure: true, // set to false if using http
+          secure: secureFlag, // set to false if using http
           sameSite: 'none',
         });
       return res.status(200).send({ user: user.toJSON() });

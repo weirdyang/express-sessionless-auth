@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true, // always convert username to lowercase
     required: [true, 'this can not be blank'],
     unique: true,
-    minLength: 6,
+    minLength: [6, 'Usernames needs to be at least 6 characters'],
     trim: true,
     index: true,
     match: [/^[a-zA-Z0-9]+$/, 'no special characters'],

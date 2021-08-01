@@ -8,20 +8,25 @@ const debug = require('debug')('app');
 const express = require('express');
 const logger = require('morgan');
 
+// read value from cookie
+// value: (req) => req.cookies['XSRF-TOKEN'],
 const csrfProtection = csurf(
   {
     cookie: {
       httpOnly: true,
       sameSite: 'none',
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
     },
+    value: (req) => req.cookies['XSRF-TOKEN'],
     ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : ['GET', 'HEAD', 'OPTIONS'],
   },
 );
 const { errorHandler, notFoundHandler } = require('./middleware');
-const { router: authRouter } = require('./routes/auth.routes');
+const { router: authRouter } = require('./routes/auth.route');
 const journalRouter = require('./routes/journals.route');
+const productRouter = require('./routes/products.route');
 const usersRouter = require('./routes/users.route');
+
 
 const app = express();
 require('./config/passport.js')(app);
@@ -31,7 +36,7 @@ require('./config/mongoose')();
 //   .insertOrigin('vue-front', 'http://localhost:8080')
 //   .then((result) => debug(result));
 const corsOptions = {
-  origin: process.env.CLIENT_URL,
+  origin: '*',
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -44,8 +49,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', csrfProtection, usersRouter);
 app.use('/auth', csrfProtection, authRouter);
-app.use('/journals', journalRouter);
-
+app.use('/journals', csrfProtection, journalRouter);
+app.use('/products', csrfProtection, productRouter);
 // error for unsupported routes (which we dont want to handle)
 app.use(notFoundHandler);
 

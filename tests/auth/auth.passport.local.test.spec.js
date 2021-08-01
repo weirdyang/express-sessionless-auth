@@ -16,6 +16,7 @@ const originalPassword = 'sdfsdfsdf';
 const user = new User({
   username: 'sdfsdfsdf',
   password: 'sdfsdfsdf',
+  avatar: 'leaf',
   email: 'sdfsdfsdf@email.com',
 });
 
@@ -32,10 +33,10 @@ describe('passport local strategy', () => {
     server.close();
   });
   describe('passport local strategy', () => {
-    it('should return a req with a user with same id', (done) => {
+    it('should return a response with a user with same id', (done) => {
       const fakeReq = {
         body: {
-          email: user.email,
+          username: user.username,
           password: originalPassword,
         },
         logIn() { },
