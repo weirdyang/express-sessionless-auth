@@ -10,7 +10,6 @@ const productSchema = new mongoose.Schema({
     minLength: [6, 'Product name needs to be at least 6 characters'],
     trim: true,
     index: true,
-    match: [/^[a-zA-Z0-9]+$/, 'no special characters'],
   },
   description: {
     type: String,
