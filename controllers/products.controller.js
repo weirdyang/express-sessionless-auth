@@ -8,13 +8,39 @@ const HttpError = require('../models/http-error');
 const Product = require('../models/product');
 
 const inMemoryStorage = multer.memoryStorage();
-const uploadStrategy = multer({ storage: inMemoryStorage }).single('file');
+const MAX_SIZE = 10 * 1024 * 1024;
+
+const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+const fileFilter = (req, file, cb) => {
+  if (validTypes.includes(file.mimetype)) {
+    return cb(null, true);
+  }
+  cb(null, false);
+  return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+};
+const uploadStrategy = multer(
+  {
+    storage: inMemoryStorage,
+    fileFilter,
+    limits: {
+      fileSize: MAX_SIZE,
+    },
+  },
+).single('file');
+
+const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) => {
+  const message = errors;
+  message[key] = error.errors[key].message;
+
+  return message;
+}, {});
 
 const createProduct = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    debug(errors);
-    return next(new HttpError('Invalid inputs', 422, errors.array()));
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    debug(result);
+    debug(result.errors);
+    return next(new HttpError('Invalid inputs', 422, result.errors));
   }
   let newProduct;
   try {
@@ -30,6 +56,11 @@ const createProduct = async (req, res, next) => {
     await newProduct.save();
     return res.status(200).send({ message: `${newProduct.name} saved`, product: newProduct });
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({
+        message: Object.values(formatErrors(error)).join(', '),
+      });
+    }
     // return res.json(422).send('Error creating entry, please try again');
     return next(
       new HttpError(error.message, 422),
@@ -38,7 +69,7 @@ const createProduct = async (req, res, next) => {
 };
 const fetchAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({}, '-image');
 
     return res.json({ products, id: req.user.id });
   } catch (error) {
@@ -123,4 +154,5 @@ module.exports = {
   deleteProduct,
   fetchProductById,
   fetchProductImage,
+  validTypes,
 };

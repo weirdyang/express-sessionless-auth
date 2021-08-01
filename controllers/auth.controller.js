@@ -15,12 +15,11 @@ const formatErrors = (error) => Object.keys(error.errors).reduce((errors, key) =
   return message;
 }, {});
 const register = async (req, res, next) => {
-  debug(req);
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    debug(errors.array());
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    debug(result.array());
     return next(
-      new HttpError('Invalid inputs passed, please check your data', 422),
+      new HttpError('Invalid inputs passed, please check your data', 422, result.errors),
     );
   }
   let newUser;
@@ -31,7 +30,7 @@ const register = async (req, res, next) => {
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(422).json({
-        errors: formatErrors(error),
+        message: Object.values(formatErrors(error)).join(', '),
       });
     }
     return next(

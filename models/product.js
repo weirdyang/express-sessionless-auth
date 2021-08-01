@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const productSchema = new mongoose.Schema({
   name: {
@@ -6,7 +7,7 @@ const productSchema = new mongoose.Schema({
     lowercase: true, // always convert username to lowercase
     required: [true, 'this can not be blank'],
     unique: true,
-    minLength: 6,
+    minLength: [6, 'Product name needs to be at least 6 characters'],
     trim: true,
     index: true,
     match: [/^[a-zA-Z0-9]+$/, 'no special characters'],
@@ -15,8 +16,8 @@ const productSchema = new mongoose.Schema({
     type: String,
     lowercase: true, // always convert username to lowercase
     required: [true, 'this can not be blank'],
-    unique: true,
-    minLength: 6,
+    unique: false,
+    minLength: [6, 'Product description needs to be at least 6 characters'],
   },
   image:
     {
@@ -25,5 +26,5 @@ const productSchema = new mongoose.Schema({
     },
   user: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
 }, { timestamps: true });
-
+productSchema.plugin(uniqueValidator, { message: '{PATH} already exists in the database' });
 module.exports = mongoose.model('Product', productSchema);

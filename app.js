@@ -8,6 +8,8 @@ const debug = require('debug')('app');
 const express = require('express');
 const logger = require('morgan');
 
+// read value from cookie
+// value: (req) => req.cookies['XSRF-TOKEN'],
 const csrfProtection = csurf(
   {
     cookie: {
@@ -15,6 +17,7 @@ const csrfProtection = csurf(
       sameSite: 'none',
       secure: false,
     },
+    value: (req) => req.cookies['XSRF-TOKEN'],
     ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : ['GET', 'HEAD', 'OPTIONS'],
   },
 );
