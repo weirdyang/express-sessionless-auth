@@ -25,6 +25,7 @@ const user = new User({
   email: 'axasxzxs@abcdef.com',
   password: '123456',
   username: 'abcdef',
+  avatar: 'leaf',
 });
 
 let deleteId;
