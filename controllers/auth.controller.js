@@ -2,7 +2,7 @@ const debug = require('debug')('app:auth:controller');
 const { validationResult } = require('express-validator');
 const passport = require('passport');
 
-const { errorFormatter, mongooseErrorFromatter } = require('../formatters');
+const { errorFormatter, mongooseErrorFormatter } = require('../formatters');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
@@ -26,7 +26,7 @@ const register = async (req, res, next) => {
       return next(
         new HttpError('Invalid inputs passed, please check your data',
           422,
-          mongooseErrorFromatter(error)),
+          mongooseErrorFormatter(error)),
       );
     }
     return next(

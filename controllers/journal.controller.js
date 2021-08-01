@@ -2,7 +2,7 @@ const debug = require('debug')('app:journals.controller');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
-const { errorFormatter } = require('../formatters');
+const { errorFormatter, mongooseErrorFormatter } = require('../formatters');
 const HttpError = require('../models/http-error');
 const Journal = require('../models/journal');
 
@@ -19,9 +19,15 @@ const createJournalEntry = async (req, res, next) => {
     await newJournal.save();
     return res.status(200).send({ message: `Entry for ${newJournal.dateOfEntry} saved`, journal: newJournal });
   } catch (error) {
-    // return res.json(422).send('Error creating entry, please try again');
+    if (error.name === 'ValidationError') {
+      return next(
+        new HttpError('Invalid inputs passed, please check your data',
+          422,
+          mongooseErrorFormatter(error)),
+      );
+    }
     return next(
-      new HttpError(error.message, 422),
+      new HttpError(error.message, 500),
     );
   }
 };
@@ -82,6 +88,13 @@ const updateJournal = async (req, res, next) => {
     );
     return res.json({ journal, id: req.user.id });
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return next(
+        new HttpError('Invalid inputs passed, please check your data',
+          422,
+          mongooseErrorFormatter(error)),
+      );
+    }
     return next(
       new HttpError(error.message, 500),
     );
