@@ -18,6 +18,7 @@ const user = new User({
   username: '2qsdax',
   password: 'asdzxczxc',
   email: 'asdasdasd@email.com',
+  avatar: 'leaf',
 });
 
 describe('users', () => {

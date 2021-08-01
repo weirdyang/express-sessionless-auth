@@ -11,8 +11,8 @@ exports.mochaHooks = {
       await mongoose.connection.db.dropCollection('users');
       await mongoose.connection.db.dropCollection('journals');
     } catch (error) {
-      console.error(error);
-      console.log('collections not dropped');
+      debug(error);
+      debug('collections not dropped');
     }
   },
 };
