@@ -13,7 +13,7 @@ const csrfProtection = csurf(
     cookie: {
       httpOnly: true,
       sameSite: 'none',
-      secure: true,
+      secure: false,
     },
     ignoreMethods: process.env.NODE_ENV === 'test' ? ['GET', 'HEAD', 'OPTIONS', 'POST', 'DELETE', 'PUT'] : ['GET', 'HEAD', 'OPTIONS'],
   },
@@ -32,7 +32,7 @@ require('./config/mongoose')();
 //   .insertOrigin('vue-front', 'http://localhost:8080')
 //   .then((result) => debug(result));
 const corsOptions = {
-  origin: process.env.CLIENT_URL,
+  origin: '*',
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -46,7 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', csrfProtection, usersRouter);
 app.use('/auth', csrfProtection, authRouter);
 app.use('/journals', csrfProtection, journalRouter);
-app.use('products', csrfProtection, productRouter);
+app.use('/products', csrfProtection, productRouter);
 // error for unsupported routes (which we dont want to handle)
 app.use(notFoundHandler);
 

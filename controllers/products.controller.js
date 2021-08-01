@@ -47,6 +47,23 @@ const fetchAllProducts = async (req, res, next) => {
     );
   }
 };
+const fetchProductImage = async (req, res, next) => {
+  try {
+    const productId = mongoose.Types.ObjectId(req.params.id);
+    const product = await Product.findById(productId);
+    const img = Buffer.from(product.image.data, 'base64');
+
+    res.writeHead(200, {
+      'Content-Type': product.image.contentType,
+      'Content-Length': img.length,
+    });
+    return res.end(img);
+  } catch (error) {
+    return next(
+      new HttpError(error.message, 500),
+    );
+  }
+};
 
 const updateProduct = async (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
@@ -105,4 +122,5 @@ module.exports = {
   uploadStrategy,
   deleteProduct,
   fetchProductById,
+  fetchProductImage,
 };
