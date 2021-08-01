@@ -1,5 +1,5 @@
 const errorFormatter = ({
-  location, msg, param, value, nestedErrors,
+  msg, param,
 }) => ({
   name: param,
   error: msg,
