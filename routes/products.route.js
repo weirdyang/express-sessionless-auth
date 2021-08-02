@@ -17,21 +17,22 @@ const {
 const { auth } = require('./auth.route');
 
 const router = express.Router();
+const fileCheck = check('file')
+  .custom((value, { req }) => {
+    if (!req.file) return false;
 
+    if (!validTypes.includes(req.file.mimetype)) {
+      return false;
+    }// return "falsy" value to indicate invalid data
+    return true;
+  })
+  .withMessage('Please ensure a file is attached, and is png or jpg format');
+const nameCheck = check('name').not().isEmpty().bail();
+const descriptionCheck = check('description').not().isEmpty().bail();
 const reqChecks = [
-  check('name').not().isEmpty().bail(),
-  check('description').not().isEmpty().bail(),
-  check('file')
-    .custom((value, { req }) => {
-      if (!req.file) return false;
-
-      if (!validTypes.includes(req.file.mimetype)) {
-        return false;
-      }// return "falsy" value to indicate invalid data
-      return true;
-    })
-    .withMessage('Please ensure a file is attached, and is png or jpg format'), // custom error message that will be send back if the file in not a pdf.
-
+  nameCheck,
+  descriptionCheck,
+  fileCheck,
 ];
 // all requests must be authenticated
 router.use(auth.jwt);
@@ -49,6 +50,10 @@ router.get('/user/self', fetchProductsForProfile);
 router.get('/user/:id', fetchProductsByUser);
 // update product entry
 router.put('/:id', uploadStrategy, reqChecks, updateProduct);
+// update product details
+router.put('/details/:id', [nameCheck, descriptionCheck], updateProduct);
+// update product image only
+router.put('/image/:id', uploadStrategy, [fileCheck], updateProduct);
 // delete
 router.delete('/:id', deleteProduct);
 

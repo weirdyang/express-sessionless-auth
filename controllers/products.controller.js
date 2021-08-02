@@ -42,6 +42,7 @@ const createProduct = async (req, res, next) => {
       name: req.body.name,
       user: req.user.id,
       description: req.body.description,
+      productType: req.body.productType,
       image: {
         data: req.file.buffer,
         contentType: req.file.mimetype,
@@ -107,7 +108,49 @@ const fetchProductImage = async (req, res, next) => {
     );
   }
 };
-
+const updateProductDetails = async (req, res, next) => {
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    debug(result);
+    return next(new HttpError('Invalid inputs', 422, result.array()));
+  }
+  try {
+    const { name, description } = req.body;
+    const productId = mongoose.Types.ObjectId(req.params.id);
+    const product = await Product.findOneAndUpdate(
+      { _id: productId },
+      {
+        name,
+        description,
+        user: req.user.id,
+      },
+      { new: true },
+    );
+    return res.json({ product, id: req.user.id });
+  } catch (error) {
+    return handleError(error, next);
+  }
+};
+const updateProductImage = async (req, res, next) => {
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    debug(result);
+    return next(new HttpError('Invalid inputs', 422, result.array()));
+  }
+  try {
+    const productId = mongoose.Types.ObjectId(req.params.id);
+    const product = await Product.findOneAndUpdate(
+      { _id: productId },
+      {
+        user: req.user.id,
+      },
+      { new: true },
+    );
+    return res.json({ product, id: req.user.id });
+  } catch (error) {
+    return handleError(error, next);
+  }
+};
 const updateProduct = async (req, res, next) => {
   const result = validationResult(req).formatWith(errorFormatter);
   if (!result.isEmpty()) {
@@ -171,5 +214,7 @@ module.exports = {
   fetchProductImage,
   fetchProductsByUser,
   fetchProductsForProfile,
+  updateProductDetails,
+  updateProductImage,
   validTypes,
 };

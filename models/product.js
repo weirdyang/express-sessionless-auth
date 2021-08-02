@@ -18,7 +18,10 @@ const productSchema = new mongoose.Schema({
     minLength: [6, 'Product description needs to be at least 6 characters'],
   },
   productType: {
-    type: mongoose.Types.ObjectId, required: true, ref: 'ProductType',
+    type: String,
+    required: [true, 'this can not be blank'],
+    unique: false,
+    minLength: [6, 'Product type needs to be at least 6 characters'],
   },
   image:
   {
