@@ -9,7 +9,9 @@ const {
   fetchProductById,
   deleteProduct,
   fetchProductImage,
+  fetchProductsByUser,
   validTypes,
+  fetchProductsForProfile,
 } = require('../controllers/products.controller');
 
 const { auth } = require('./auth.route');
@@ -42,8 +44,9 @@ router.get('/', fetchAllProducts);
 // get specific journal
 router.get('/:id', fetchProductById);
 // get products for user
+router.get('/user/self', fetchProductsForProfile);
 // todo: future feature
-// router.get('/user/:id', fetchJournalsForUser);
+router.get('/user/:id', fetchProductsByUser);
 // update product entry
 router.put('/:id', uploadStrategy, reqChecks, updateProduct);
 // delete

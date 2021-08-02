@@ -18,12 +18,18 @@ const productSchema = new mongoose.Schema({
     unique: false,
     minLength: [6, 'Product description needs to be at least 6 characters'],
   },
+  productType: {
+    type: mongoose.Types.ObjectId, required: true, ref: 'ProductType',
+  },
   image:
-    {
-      data: Buffer,
-      contentType: String,
-    },
+  {
+    data: Buffer,
+    contentType: String,
+  },
   user: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
 }, { timestamps: true });
 productSchema.plugin(uniqueValidator, { message: '{PATH} already exists in the database' });
-module.exports = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', productSchema);
+module.exports = {
+  Product,
+};

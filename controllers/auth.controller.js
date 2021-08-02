@@ -4,9 +4,7 @@ const passport = require('passport');
 
 const { errorFormatter, handleError } = require('../formatters');
 const HttpError = require('../models/http-error');
-const User = require('../models/user');
-
-const secureFlag = process.env.NODE_ENV === 'production';
+const { User } = require('../models/user');
 
 const register = async (req, res, next) => {
   const result = validationResult(req).formatWith(errorFormatter);

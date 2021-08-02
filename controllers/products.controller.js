@@ -5,7 +5,8 @@ const multer = require('multer');
 
 const { errorFormatter, handleError } = require('../formatters');
 const HttpError = require('../models/http-error');
-const Product = require('../models/product');
+const { Product } = require('../models/product');
+const { roles } = require('../models/user');
 
 const inMemoryStorage = multer.memoryStorage();
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -64,6 +65,31 @@ const fetchAllProducts = async (req, res, next) => {
     );
   }
 };
+const fetchProductsByUser = async (req, res, next) => {
+  try {
+    debug(req.user.id);
+    debug(req.params.id);
+
+    const products = await Product.find({ user: req.params.id }, '-image');
+    return res.json({ products, id: req.user.id });
+  } catch (error) {
+    return next(
+      new HttpError(error.message, 500),
+    );
+  }
+};
+const fetchProductsForProfile = async (req, res, next) => {
+  try {
+    debug(req.user.id);
+    debug(req.params.id);
+    const products = await Product.find({ user: req.user.id }, '-image');
+    return res.json({ products, id: req.user.id });
+  } catch (error) {
+    return next(
+      new HttpError(error.message, 500),
+    );
+  }
+};
 const fetchProductImage = async (req, res, next) => {
   try {
     const productId = mongoose.Types.ObjectId(req.params.id);
@@ -109,7 +135,12 @@ const updateProduct = async (req, res, next) => {
     return handleError(error, next);
   }
 };
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
+  if (req.user.role !== roles.superuser) {
+    return next(
+      new HttpError(`Only ${roles.superuser} can delete products`, 401),
+    );
+  }
   const productId = mongoose.Types.ObjectId(req.params.id);
   const product = await Product.findByIdAndRemove(productId);
   if (!product) {
@@ -121,7 +152,7 @@ const deleteProduct = async (req, res) => {
 const fetchProductById = async (req, res, next) => {
   try {
     const productId = mongoose.Types.ObjectId(req.params.id);
-    const products = await Product.findById(productId);
+    const products = await Product.findById(productId).populate('user');
     return res.json({ products, id: req.user.id });
   } catch (error) {
     return next(
@@ -138,5 +169,7 @@ module.exports = {
   deleteProduct,
   fetchProductById,
   fetchProductImage,
+  fetchProductsByUser,
+  fetchProductsForProfile,
   validTypes,
 };

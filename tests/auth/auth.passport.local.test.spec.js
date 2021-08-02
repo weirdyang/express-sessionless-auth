@@ -8,7 +8,7 @@ const passport = require('passport');
 // const productId = config.productId;
 const app = require('../../app');
 const { PORT } = require('../../config');
-const User = require('../../models/user');
+const { User } = require('../../models/user');
 // Configure chai
 chai.use(chaiHttp);
 chai.should();

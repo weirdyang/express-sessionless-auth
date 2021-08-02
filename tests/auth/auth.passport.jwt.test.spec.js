@@ -10,7 +10,7 @@ const passport = require('passport');
 const app = require('../../app');
 const { PORT } = require('../../config');
 const { secret } = require('../../config');
-const User = require('../../models/user');
+const { User } = require('../../models/user');
 // Configure chai
 chai.use(chaiHttp);
 chai.should();

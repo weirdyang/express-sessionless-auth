@@ -1,5 +1,5 @@
 const HttpError = require('../models/http-error');
-const User = require('../models/user');
+const { User } = require('../models/user');
 
 const wrap = (fn) => (...args) => fn(...args).catch(args[2]);
 
@@ -46,7 +46,7 @@ const getUsers = wrap(async (req, res, next) => {
 });
 
 const getUserInfo = wrap(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).populate('journals');
   if (!user) {
     return res.sendStatus(401);
   }
@@ -59,10 +59,10 @@ const getUser = wrap(async (req, res, next) => {
   const { userId } = req.params;
   let user;
   try {
-    user = await User.findById(userId, '-password');
+    user = await User.findById(userId, '-password').populate('products');
   } catch (err) {
     const error = new HttpError(
-      'Eror fetching user details, please try again later',
+      'Error fetching user details, please try again later',
       500,
     );
     return next(error);

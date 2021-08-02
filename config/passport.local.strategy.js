@@ -2,7 +2,7 @@ const debug = require('debug')('app:passport-strategy');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-const User = require('../models/user');
+const { User } = require('../models/user');
 
 module.exports = function localStrategy() {
   passport.use(

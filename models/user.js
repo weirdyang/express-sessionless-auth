@@ -7,6 +7,10 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const { secret } = require('../config');
 
+const roles = {
+  normal: 'user',
+  superuser: 'admin',
+};
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -35,6 +39,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  role: {
+    type: String,
+    required: true,
+    default: roles.normal,
+  },
+  products: {
+    type: [{ type: mongoose.Types.ObjectId, required: false, ref: 'Product' }],
   },
   journals: {
     type: [{ type: mongoose.Types.ObjectId, required: false, ref: 'Journal' }],
@@ -73,6 +85,7 @@ userSchema.methods.generateJWT = function generateToken() {
   return jwt.sign({
     id: this._id,
     username: this.username,
+    role: this.role,
     exp: parseInt(exp.getTime() / 1000, 10),
   }, secret);
 };
@@ -97,6 +110,9 @@ userSchema.methods.validatePassword = function validate(password, callback) {
   );
 };
 
+userSchema.methods.roles = function getRoles() {
+  return roles;
+};
 // middleware, intercept before save
 userSchema.pre('save', function hashMiddleWare(next) {
   const user = this;
@@ -114,5 +130,9 @@ userSchema.pre('save', function hashMiddleWare(next) {
     return next();
   });
 });
+const User = mongoose.model('User', userSchema);
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = {
+  User,
+  roles,
+};

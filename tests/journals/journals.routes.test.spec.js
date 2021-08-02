@@ -10,7 +10,7 @@ const sinon = require('sinon');
 const app = require('../../app');
 const { PORT } = require('../../config');
 const Journal = require('../../models/journal');
-const User = require('../../models/user');
+const { User } = require('../../models/user');
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
