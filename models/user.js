@@ -15,26 +15,26 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     lowercase: true, // always convert username to lowercase
-    required: [true, 'this can not be blank'],
+    required: [true, 'Username can not be blank'],
     unique: true,
     minLength: [6, 'Usernames needs to be at least 6 characters'],
     trim: true,
     index: true,
-    match: [/^[a-zA-Z0-9]+$/, 'no special characters'],
+    match: [/^[a-zA-Z0-9]+$/, 'No special characters allowed in the username'],
   },
   avatar: {
     type: String,
     lowercase: true,
-    required: [true, 'please select an avatar'],
+    required: [true, 'Please select an avatar'],
   },
   email: {
     type: String,
     index: true,
     unique: true,
-    required: [true, 'this can not be blank'],
+    required: [true, 'Email can not be blank'],
     trim: true,
     lowercase: true,
-    match: [/\S+@\S+\.\S+/, 'invalid email'],
+    match: [/\S+@\S+\.\S+/, 'Invalid email'],
   },
   password: {
     type: String,
