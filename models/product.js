@@ -4,7 +4,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
-    lowercase: true, // always convert username to lowercase
+    lowercase: true,
     required: [true, 'this can not be blank'],
     unique: true,
     minLength: [6, 'Product name needs to be at least 6 characters'],
@@ -13,7 +13,6 @@ const productSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    lowercase: true, // always convert username to lowercase
     required: [true, 'this can not be blank'],
     unique: false,
     minLength: [6, 'Product description needs to be at least 6 characters'],
