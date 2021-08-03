@@ -11,6 +11,8 @@ const {
   fetchProductImage,
   fetchProductsByUser,
   validTypes,
+  updateProductImage,
+  updateProductDetails,
   fetchProductsForProfile,
 } = require('../controllers/products.controller');
 
@@ -53,9 +55,9 @@ router.get('/user/:id', fetchProductsByUser);
 // update product entry
 router.put('/:id', uploadStrategy, reqChecks, updateProduct);
 // update product details
-router.put('/details/:id', [nameCheck, descriptionCheck, productTypeCheck], updateProduct);
+router.put('/details/:id', [nameCheck, descriptionCheck, productTypeCheck], updateProductDetails);
 // update product image only
-router.put('/image/:id', uploadStrategy, [fileCheck], updateProduct);
+router.put('/image/:id', uploadStrategy, [fileCheck], updateProductImage);
 // delete
 router.delete('/:id', deleteProduct);
 

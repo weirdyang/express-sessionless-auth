@@ -115,18 +115,18 @@ const updateProductDetails = async (req, res, next) => {
     return next(new HttpError('Invalid inputs', 422, result.array()));
   }
   try {
-    const { name, description } = req.body;
+    const { name, description, productType } = req.body;
     const productId = mongoose.Types.ObjectId(req.params.id);
     const product = await Product.findOneAndUpdate(
       { _id: productId },
       {
         name,
         description,
-        user: req.user.id,
+        productType,
       },
       { new: true },
     );
-    return res.json({ product, id: req.user.id });
+    return res.json(product.toObject({ getters: true }));
   } catch (error) {
     return handleError(error, next);
   }
@@ -195,8 +195,8 @@ const deleteProduct = async (req, res, next) => {
 const fetchProductById = async (req, res, next) => {
   try {
     const productId = mongoose.Types.ObjectId(req.params.id);
-    const products = await Product.findById(productId).populate('user');
-    return res.json({ products, id: req.user.id });
+    const product = await Product.findById(productId, '-image');
+    return res.json(product.toObject({ getters: true }));
   } catch (error) {
     return next(
       new HttpError(error.message, 500),
