@@ -83,8 +83,11 @@ const fetchProductsForProfile = async (req, res, next) => {
   try {
     debug(req.user.id);
     debug(req.params.id);
-    const products = await Product.find({ user: req.user.id }, '-image');
-    return res.json({ products, id: req.user.id });
+    const product = await Product.find({ user: req.user.id }, '-image');
+    if (!product) {
+      return res.status(404).send({ message: `Products for user: ${req.user.id}` });
+    }
+    return res.json({ ...product, id: req.user.id });
   } catch (error) {
     return next(
       new HttpError(error.message, 500),
@@ -95,6 +98,9 @@ const fetchProductImage = async (req, res, next) => {
   try {
     const productId = mongoose.Types.ObjectId(req.params.id);
     const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).send({ message: `no such product with ${productId}` });
+    }
     const img = Buffer.from(product.image.data, 'base64');
 
     res.writeHead(200, {
@@ -126,7 +132,12 @@ const updateProductDetails = async (req, res, next) => {
       },
       { new: true },
     );
-    return res.json(product.toObject({ getters: true }));
+    const updated = product.toObject({ getters: true });
+    delete updated.image;
+    return res.json({
+      ...updated,
+      message: 'Product updated',
+    });
   } catch (error) {
     return handleError(error, next);
   }
@@ -142,11 +153,14 @@ const updateProductImage = async (req, res, next) => {
     const product = await Product.findOneAndUpdate(
       { _id: productId },
       {
-        user: req.user.id,
+        image: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+        },
       },
       { new: true },
     );
-    return res.json({ product, id: req.user.id });
+    return res.json(product.toObject({ getters: true }));
   } catch (error) {
     return handleError(error, next);
   }
@@ -165,7 +179,6 @@ const updateProduct = async (req, res, next) => {
       {
         name,
         description,
-        user: req.user.id,
         image: {
           data: req.file.buffer,
           contentType: req.file.mimetype,
@@ -173,7 +186,7 @@ const updateProduct = async (req, res, next) => {
       },
       { new: true },
     );
-    return res.json({ product, id: req.user.id });
+    return res.json(product.toObject({ getters: true }));
   } catch (error) {
     return handleError(error, next);
   }
@@ -196,6 +209,9 @@ const fetchProductById = async (req, res, next) => {
   try {
     const productId = mongoose.Types.ObjectId(req.params.id);
     const product = await Product.findById(productId, '-image');
+    if (!product) {
+      return next(new HttpError(`No such product with id ${productId}`, 404));
+    }
     return res.json(product.toObject({ getters: true }));
   } catch (error) {
     return next(

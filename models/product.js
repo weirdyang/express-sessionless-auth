@@ -30,6 +30,7 @@ const productSchema = new mongoose.Schema({
   },
   user: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
 }, { timestamps: true });
+
 productSchema.plugin(uniqueValidator, { message: '{PATH} already exists in the database' });
 const Product = mongoose.model('Product', productSchema);
 module.exports = {
